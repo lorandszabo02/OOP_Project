@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="AddCountry">
+  <grid id="27dc6" binding="NewCountryPanel" layout-manager="GridLayoutManager" row-count="5" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="518" height="423"/>
+    </constraints>
+    <properties>
+      <background color="-16444120"/>
+      <foreground color="-2"/>
+    </properties>
+    <border type="none" title="New Country"/>
+    <children>
+      <component id="52450" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-16444120"/>
+          <foreground color="-2"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <labelFor value="958c0"/>
+          <text value="Country Name"/>
+        </properties>
+      </component>
+      <component id="958c0" class="javax.swing.JTextField" binding="nameTextField">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-15781814"/>
+          <foreground color="-2"/>
+          <horizontalAlignment value="0"/>
+          <text value="Enter country name"/>
+        </properties>
+      </component>
+      <component id="fadd6" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="5" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-16444120"/>
+          <foreground color="-2"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <labelFor value="353a1"/>
+          <text value="Continent"/>
+        </properties>
+      </component>
+      <component id="353a1" class="javax.swing.JComboBox" binding="continentComboBox">
+        <constraints>
+          <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-15781814"/>
+          <foreground color="-2"/>
+          <toolTipText value=""/>
+        </properties>
+      </component>
+      <component id="67909" class="javax.swing.JButton" binding="addCountryButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="7" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-16444120"/>
+          <foreground color="-2"/>
+          <horizontalTextPosition value="0"/>
+          <text value="Add Country"/>
+        </properties>
+      </component>
+      <component id="a502b" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-16444120"/>
+          <foreground color="-2"/>
+          <horizontalAlignment value="0"/>
+          <horizontalTextPosition value="0"/>
+          <labelFor value="bb44e"/>
+          <text value="Country ID"/>
+        </properties>
+      </component>
+      <component id="bb44e" class="javax.swing.JTextField" binding="countryID">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-15781814"/>
+          <foreground color="-2"/>
+          <horizontalAlignment value="0"/>
+          <text value="Enter country ID (3 chars)"/>
+        </properties>
+      </component>
+      <component id="84b9a" class="javax.swing.JSeparator" binding="separator4">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-16444120"/>
+        </properties>
+      </component>
+      <component id="f904a" class="javax.swing.JSeparator" binding="separator5">
+        <constraints>
+          <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-16444120"/>
+        </properties>
+      </component>
+      <component id="a5e80" class="javax.swing.JSeparator" binding="separator6">
+        <constraints>
+          <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-16444120"/>
+        </properties>
+      </component>
+      <component id="450b3" class="javax.swing.JSeparator" binding="separator3">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-16444120"/>
+        </properties>
+      </component>
+      <component id="2b836" class="javax.swing.JSeparator" binding="separator7">
+        <constraints>
+          <grid row="1" column="8" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="c88bc" class="javax.swing.JSeparator" binding="separator2">
+        <constraints>
+          <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="30" height="30"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-16444121"/>
+          <enabled value="true"/>
+          <foreground color="-16444121"/>
+        </properties>
+      </component>
+      <component id="ec656" class="javax.swing.JSeparator" binding="separator1">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="30" height="30"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-16444121"/>
+          <enabled value="true"/>
+          <foreground color="-16444121"/>
+        </properties>
+      </component>
+      <component id="ed332" class="javax.swing.JLabel" binding="IDInvalidLabel">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-65536"/>
+          <text value="ID invalid"/>
+        </properties>
+      </component>
+      <component id="67716" class="javax.swing.JLabel" binding="NameInvalidLabel">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-65536"/>
+          <text value="Name invalid"/>
+        </properties>
+      </component>
+      <component id="58c9a" class="javax.swing.JLabel" binding="ContinentInvalidLabel">
+        <constraints>
+          <grid row="3" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-65536"/>
+          <text value="Invalid continent"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
