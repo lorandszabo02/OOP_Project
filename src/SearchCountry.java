@@ -106,9 +106,10 @@ public class SearchCountry extends JFrame{
                             continentIdResultSet = continentIdPreparedStatement.executeQuery();
                             if(continentIdResultSet.next()){
                                 int continentId = continentIdResultSet.getInt("id");
+
+                                //idk why the statement below works only if it is in a single line
                                 updatePreparedStatment = connection.prepareStatement(
-                                        "UPDATE country SET continent = ?" +
-                                                "WHERE country_name = ?"
+                                        "UPDATE country SET continent = ? WHERE country_name = ?"
                                 );
                                 updatePreparedStatment.setInt(1, continentId);
                                 updatePreparedStatment.setString(2, searchText.getText());
