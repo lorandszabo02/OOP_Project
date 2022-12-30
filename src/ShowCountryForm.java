@@ -15,9 +15,12 @@ public class ShowCountryForm extends JFrame{
     private String[] columnNames = {"Country", "Continent"};
 
     Connection connection;
-    PreparedStatement preparedStatementForTable;
-    Statement statement1, statement2;
-    ResultSet resultSetForTable, resultSetForComboBox, resultSetForFullTable;
+    PreparedStatement preparedStatementForTable; // reads countries of a certain continent
+    Statement everyContinentStatement;
+    Statement continentStatement;
+    ResultSet resultSetForTable; // contains country-continent pairs of a certain continent
+    ResultSet resultSetForComboBox; // contains continents for combo box
+    ResultSet resultSetForFullTable; // contains country-continent pairs for every continent
 
     public ShowCountryForm(){
         this.setContentPane(this.MainPanel);
@@ -37,15 +40,15 @@ public class ShowCountryForm extends JFrame{
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel", "postgres", "postgres");
 
-            statement1 = connection.createStatement();
-            statement2 = connection.createStatement();
+            everyContinentStatement = connection.createStatement();
+            continentStatement = connection.createStatement();
 
             preparedStatementForTable = connection.prepareStatement(
                     "select country_name, name from country join continent" +
                             " on country.continent = continent.id where continent.name LIKE ?;"
             );
-            resultSetForComboBox = statement2.executeQuery("select name from continent order by name;");
-            resultSetForFullTable = statement1.executeQuery("select country_name, name from country join continent on country.continent = continent.id;");
+            resultSetForComboBox = continentStatement.executeQuery("select name from continent order by name;");
+            resultSetForFullTable = everyContinentStatement.executeQuery("select country_name, name from country join continent on country.continent = continent.id;");
 
             manageComboBox(chooseContinent, resultSetForComboBox);
             manageCountryTable(countryTable, resultSetForFullTable, columnNames);

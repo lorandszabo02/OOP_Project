@@ -5,7 +5,7 @@ import java.sql.*;
 
 public class SearchCountry extends JFrame{
     private JTextField searchText;
-    private JButton submitButton;
+    private JButton searchButton;
     private JPanel SearchPanel;
     private JLabel invalidNameLabel;
     private JButton updateButton;
@@ -19,9 +19,11 @@ public class SearchCountry extends JFrame{
     Statement continentStatement;
     PreparedStatement searchPreparedStatement;
     PreparedStatement deletePreparedStatement;
-    PreparedStatement updatePreparedStatment;
+    PreparedStatement updatePreparedStatement;
     PreparedStatement continentIdPreparedStatement;
-    ResultSet searchResultSet, continentResultSet, continentIdResultSet;
+    ResultSet searchResultSet;
+    ResultSet continentResultSet;
+    ResultSet continentIdResultSet;
 
     public SearchCountry() {
         this.setContentPane(this.SearchPanel);
@@ -50,147 +52,16 @@ public class SearchCountry extends JFrame{
             System.out.println(ex);
         }
 
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try{
-                    Class.forName("org.postgresql.Driver");
-                    connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel", "postgres", "postgres");
+        deleteButton.addActionListener(new DeleteActionListener());
 
-                    deletePreparedStatement = connection.prepareStatement(
-                            "DELETE FROM country WHERE country_name = ?"
-                    );
-                    deletePreparedStatement.setString(1, searchText.getText());
-                    deletePreparedStatement.executeUpdate();
+        updateButton.addActionListener(new UpdateButtonActionListener());
 
-                    JOptionPane.showMessageDialog(null,
-                            searchText.getText() + " deleted", "Delete message", JOptionPane.INFORMATION_MESSAGE);
+        submitUpdateButton.addActionListener(new SubmitUpdateActionListener());
 
-                    updateButton.setVisible(false);
-                    deleteButton.setVisible(false);
-                } catch (Exception ex){
-                    System.out.println(ex);
-                }
-            }
-        });
-
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                continentComboBox.setVisible(true);
-                newNameText.setVisible(true);
-                submitUpdateButton.setVisible(true);
-            }
-        });
-
-        submitUpdateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Class.forName("org.postgresql.Driver");
-                    connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel", "postgres", "postgres");
-
-                    String continent = continentComboBox.getSelectedItem().toString();
-                    System.out.println(continent);
-
-                    if(newNameText.getText().equals("") || newNameText.getText().equals(newNamePlaceHolder)){
-                        if(continent.equals("Keep continent")){
-                            JOptionPane.showMessageDialog(null,
-                                    "No changes made", "Update message", JOptionPane.INFORMATION_MESSAGE);
-                        }
-                        else{
-                            continentIdPreparedStatement = connection.prepareStatement(
-                                    "SELECT id FROM continent WHERE name = ?"
-                            );
-                            continentIdPreparedStatement.setString(1, continentComboBox.getSelectedItem().toString());
-                            continentIdResultSet = continentIdPreparedStatement.executeQuery();
-                            if(continentIdResultSet.next()){
-                                int continentId = continentIdResultSet.getInt("id");
-
-                                //idk why the statement below works only if it is in a single line
-                                updatePreparedStatment = connection.prepareStatement(
-                                        "UPDATE country SET continent = ? WHERE country_name = ?"
-                                );
-                                updatePreparedStatment.setInt(1, continentId);
-                                updatePreparedStatment.setString(2, searchText.getText());
-
-                                updatePreparedStatment.executeUpdate();
-                            }
-                            else{
-                                JOptionPane.showMessageDialog(null,
-                                        "Continent ID not found", "Error", JOptionPane.ERROR_MESSAGE);
-                            }
-                        }
-                    }
-                    else {
-                        if (continent.equals("Keep continent")) {
-                            updatePreparedStatment = connection.prepareStatement(
-                                    "UPDATE country SET country_name = ? WHERE country_name = ?"
-                            );
-                            updatePreparedStatment.setString(1, newNameText.getText());
-                            updatePreparedStatment.setString(2, searchText.getText());
-                            updatePreparedStatment.executeUpdate();
-                        } else {
-                            continentIdPreparedStatement = connection.prepareStatement(
-                                    "SELECT id FROM continent WHERE name = ?"
-                            );
-                            continentIdPreparedStatement.setString(1, continentComboBox.getSelectedItem().toString());
-                            continentIdResultSet = continentIdPreparedStatement.executeQuery();
-                            if (continentIdResultSet.next()) {
-                                int continentId = continentIdResultSet.getInt("id");
-                                updatePreparedStatment = connection.prepareStatement(
-                                        "UPDATE country SET country_name = ?, continent = ? WHERE country_name = ?"
-                                );
-                                updatePreparedStatment.setString(1, newNameText.getText());
-                                updatePreparedStatment.setInt(2, continentId);
-                                updatePreparedStatment.setString(3, searchText.getText());
-
-                                updatePreparedStatment.executeUpdate();
-                            } else {
-                                JOptionPane.showMessageDialog(null,
-                                        "Continent ID not found", "Error", JOptionPane.ERROR_MESSAGE);
-                            }
-                        }
-                    }
-                    JOptionPane.showMessageDialog(null,
-                            searchText.getText() + " updated", "Update message", JOptionPane.INFORMATION_MESSAGE);
-
-                    continentComboBox.setVisible(false);
-                    newNameText.setVisible(false);
-                    updateButton.setVisible(false);
-                    deleteButton.setVisible(false);
-                    submitUpdateButton.setVisible(false);
-                }catch (Exception ex){
-                    System.out.println(ex);
-                }
-            }
-        });
-
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String nameEntered = searchText.getText();
-                if (nameEntered == null || nameEntered.equals("") || nameEntered.equals(searchPlaceHolder)) {
-                    invalidNameLabel.setVisible(true);
-                    updateButton.setVisible(false);
-                    deleteButton.setVisible(false);
-                } else {
-                    String countryFound = validCountryName(nameEntered);
-                    if (countryFound != null) {
-                        invalidNameLabel.setVisible(false);
-                        updateButton.setVisible(true);
-                        deleteButton.setVisible(true);
-                    } else {
-                        invalidNameLabel.setText("Invalid name");
-                        invalidNameLabel.setVisible(true);
-                        updateButton.setVisible(false);
-                        deleteButton.setVisible(false);
-                    }
-                }
-            }
-        });
+        searchButton.addActionListener(new SearchButtonActionListener());
     }
 
+    // somehow create a class to contain reused code -> in 'controllers' package
     public void setPlaceHolder(JTextField textField, String placeHolder){
         textField.setForeground(Color.GRAY);
         textField.addFocusListener(new FocusListener() {
@@ -210,6 +81,8 @@ public class SearchCountry extends JFrame{
             }
         });
     }
+
+    // searches for a country that already exists
     public String validCountryName(String name){
         try{
             Class.forName("org.postgresql.Driver");
@@ -232,6 +105,7 @@ public class SearchCountry extends JFrame{
         return null;
     }
 
+    // controller for combo box
     public void manageComboBox(JComboBox<String> comboBox, ResultSet resultSet){
         try {
             DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
@@ -243,6 +117,163 @@ public class SearchCountry extends JFrame{
 
         } catch (Exception e){
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    class UpdateButtonActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            continentComboBox.setVisible(true);
+            newNameText.setVisible(true);
+            submitUpdateButton.setVisible(true);
+        }
+    }
+
+    // controller for delete operation
+    class DeleteActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try{
+                Class.forName("org.postgresql.Driver");
+                connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel", "postgres", "postgres");
+
+                deletePreparedStatement = connection.prepareStatement(
+                        "DELETE FROM country WHERE country_name = ?"
+                );
+                deletePreparedStatement.setString(1, searchText.getText());
+                deletePreparedStatement.executeUpdate();
+
+                JOptionPane.showMessageDialog(null,
+                        searchText.getText() + " deleted", "Delete message", JOptionPane.INFORMATION_MESSAGE);
+
+                updateButton.setVisible(false);
+                deleteButton.setVisible(false);
+            } catch (Exception ex){
+                System.out.println(ex);
+            }
+        }
+    }
+
+    /**
+     * controller for update operation
+     * 4 cases:
+     *  - nothing updated
+     *  - only continent updated
+     *  - only country name updated
+     *  - both updated
+     */
+    class SubmitUpdateActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                Class.forName("org.postgresql.Driver");
+                connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel", "postgres", "postgres");
+
+                String continent = continentComboBox.getSelectedItem().toString();
+                System.out.println(continent);
+
+                if(newNameText.getText().equals("") || newNameText.getText().equals(newNamePlaceHolder)){
+                    if(continent.equals("Keep continent")){
+                        // nothing updated
+                        JOptionPane.showMessageDialog(null,
+                                "No changes made", "Update message", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                    else{
+                        // only continent updated
+                        continentIdPreparedStatement = connection.prepareStatement(
+                                "SELECT id FROM continent WHERE name = ?"
+                        );
+                        continentIdPreparedStatement.setString(1, continentComboBox.getSelectedItem().toString());
+                        continentIdResultSet = continentIdPreparedStatement.executeQuery();
+                        if(continentIdResultSet.next()){
+                            int continentId = continentIdResultSet.getInt("id");
+
+                            //idk why the statement below works only if it is in a single line
+                            updatePreparedStatement = connection.prepareStatement(
+                                    "UPDATE country SET continent = ? WHERE country_name = ?"
+                            );
+                            updatePreparedStatement.setInt(1, continentId);
+                            updatePreparedStatement.setString(2, searchText.getText());
+
+                            updatePreparedStatement.executeUpdate();
+                        }
+                        else{
+                            // shouldn't enter here
+                            JOptionPane.showMessageDialog(null,
+                                    "Continent ID not found", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+                else {
+                    if (continent.equals("Keep continent")) {
+                        // only country name updated
+                        updatePreparedStatement = connection.prepareStatement(
+                                "UPDATE country SET country_name = ? WHERE country_name = ?"
+                        );
+                        updatePreparedStatement.setString(1, newNameText.getText());
+                        updatePreparedStatement.setString(2, searchText.getText());
+                        updatePreparedStatement.executeUpdate();
+                    } else {
+                        // both updated
+                        continentIdPreparedStatement = connection.prepareStatement(
+                                "SELECT id FROM continent WHERE name = ?"
+                        );
+                        continentIdPreparedStatement.setString(1, continentComboBox.getSelectedItem().toString());
+                        continentIdResultSet = continentIdPreparedStatement.executeQuery();
+                        if (continentIdResultSet.next()) {
+                            int continentId = continentIdResultSet.getInt("id");
+                            updatePreparedStatement = connection.prepareStatement(
+                                    "UPDATE country SET country_name = ?, continent = ? WHERE country_name = ?"
+                            );
+                            updatePreparedStatement.setString(1, newNameText.getText());
+                            updatePreparedStatement.setInt(2, continentId);
+                            updatePreparedStatement.setString(3, searchText.getText());
+
+                            updatePreparedStatement.executeUpdate();
+                        } else {
+                            // shouldn't enter here
+                            JOptionPane.showMessageDialog(null,
+                                    "Continent ID not found", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+                JOptionPane.showMessageDialog(null,
+                        searchText.getText() + " updated", "Update message", JOptionPane.INFORMATION_MESSAGE);
+
+                continentComboBox.setVisible(false);
+                newNameText.setVisible(false);
+                updateButton.setVisible(false);
+                deleteButton.setVisible(false);
+                submitUpdateButton.setVisible(false);
+            }catch (Exception ex){
+                System.out.println(ex);
+            }
+        }
+    }
+
+    // controller for submit button when submitting update
+    class SearchButtonActionListener implements ActionListener{
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String nameEntered = searchText.getText();
+            if (nameEntered == null || nameEntered.equals("") || nameEntered.equals(searchPlaceHolder)) {
+                invalidNameLabel.setVisible(true);
+                updateButton.setVisible(false);
+                deleteButton.setVisible(false);
+            } else {
+                String countryFound = validCountryName(nameEntered);
+                if (countryFound != null) {
+                    invalidNameLabel.setVisible(false);
+                    updateButton.setVisible(true);
+                    deleteButton.setVisible(true);
+                } else {
+                    invalidNameLabel.setText("Invalid name");
+                    invalidNameLabel.setVisible(true);
+                    updateButton.setVisible(false);
+                    deleteButton.setVisible(false);
+                }
+            }
         }
     }
 }

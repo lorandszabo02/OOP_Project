@@ -22,9 +22,12 @@ public class AddCountry extends JFrame{
     private JLabel ContinentInvalidLabel;
 
     Connection connection;
-    Statement continentStatement;
-    PreparedStatement addCountryStatement, getContinentIdStatement;
+    Statement continentStatement; // to get continents
+    PreparedStatement addCountryStatement; // create operation
+    PreparedStatement getContinentIdStatement; // continent id is needed for the insert
+    PreparedStatement countExistingCountries; // see if country already exists
     ResultSet continentResultSet;
+    ResultSet nrOfExistingCountries; // 1 if country already exists
 
     public AddCountry(){
         this.setContentPane(this.NewCountryPanel);
@@ -50,9 +53,7 @@ public class AddCountry extends JFrame{
         try{
             Class.forName("org.postgresql.Driver");
             connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel", "postgres", "postgres");
-
             continentStatement = connection.createStatement();
-
             continentResultSet = continentStatement.executeQuery("select name from continent order by name;");
 
             manageComboBox(continentComboBox, continentResultSet);
@@ -78,6 +79,7 @@ public class AddCountry extends JFrame{
         ContinentInvalidLabel.setVisible(false);
     }
 
+    // function to manage the combo box containing continents
     public void manageComboBox(JComboBox<String> comboBox, ResultSet resultSet){
         try {
             DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
@@ -118,6 +120,7 @@ public class AddCountry extends JFrame{
 
         boolean valid = true;
         if(nameOfCountry.length() < 3 || nameOfCountry.equals("Enter country name")){
+            NameInvalidLabel.setText("Country name incorrect");
             NameInvalidLabel.setVisible(true);
             valid = false;
         }
@@ -129,6 +132,32 @@ public class AddCountry extends JFrame{
             ContinentInvalidLabel.setVisible(true);
             valid = false;
         }
+
+        try {
+            countExistingCountries = connection.prepareStatement(
+                    "SELECT COUNT(*) AS existsCountry FROM country" +
+                            " WHERE country_name = ? OR id = ?"
+            );
+            countExistingCountries.setString(1, nameOfCountry);
+            countExistingCountries.setString(2, idOfCountry);
+            nrOfExistingCountries = countExistingCountries.executeQuery();
+            if(nrOfExistingCountries.next()){
+                int nrOfCountry = nrOfExistingCountries.getInt("existsCountry");
+                // if country already exists
+                if(nrOfCountry != 0){
+                    NameInvalidLabel.setText("Country already exists");
+                    NameInvalidLabel.setVisible(true);
+                    valid = false;
+                }
+            }
+            else{
+                System.out.println("Something went wrong");
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
+
         if(valid){
             JOptionPane.showMessageDialog(null, "Country " +
                     nameOfCountry + " added", "Operation successful", JOptionPane.INFORMATION_MESSAGE);
@@ -158,7 +187,7 @@ public class AddCountry extends JFrame{
                         "insert into country (id, continent, country_name)" +
                                 "values (?, ?, ?);"
                 );
-                addCountryStatement.setString(1, idOfCountry);
+                addCountryStatement.setString(1, idOfCountry.toUpperCase());
                 addCountryStatement.setInt(2, continentId);
                 addCountryStatement.setString(3, nameOfCountry);
                 addCountryStatement.executeUpdate();
