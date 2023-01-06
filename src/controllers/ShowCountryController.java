@@ -6,8 +6,10 @@ import views.ShowCountryForm;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,6 +55,7 @@ public class ShowCountryController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 AddCountry addCountry = new AddCountry();
+                AddCountryController addCountryController = new AddCountryController(addCountry);
             }
         });
 
@@ -60,6 +63,21 @@ public class ShowCountryController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 SearchCountry searchCountry = new SearchCountry();
+                SearchCountryController searchCountryController = new SearchCountryController(searchCountry);
+            }
+        });
+
+        showCountryFormView.addPressMeListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(Desktop.isDesktopSupported()){
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        desktop.browse(new URI("https://bit.ly/3G5RCdZ"));
+                    } catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+                }
             }
         });
     }
@@ -114,7 +132,7 @@ public class ShowCountryController {
         }
     }
 
-    public void manageComboBox(JComboBox<String> comboBox, ResultSet resultSet){
+    public static void manageComboBox(JComboBox<String> comboBox, ResultSet resultSet){
         try {
             DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
             comboBoxModel.addElement("All");

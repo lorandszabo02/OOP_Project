@@ -93,4 +93,8 @@ public class ShowCountryForm extends JFrame{
     public void addSearchButtonListener(ActionListener l){
         searchCountryButton.addActionListener(l);
     }
+
+    public void addPressMeListener(ActionListener l){
+        pressMeButton.addActionListener(l);
+    }
 }

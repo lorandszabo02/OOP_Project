@@ -1,0 +1,179 @@
+create sequence ticket_sold_id_seq
+    as integer;
+
+alter sequence ticket_sold_id_seq owner to postgres;
+
+create table sessions
+(
+    session_id varchar(255) not null
+        primary key,
+    data       text,
+    ip         varchar(45),
+    agent      varchar(300),
+    stamp      integer
+);
+
+alter table sessions
+    owner to postgres;
+
+create table attraction_type
+(
+    id   integer not null
+        constraint attraction_type_pk
+            primary key,
+    type varchar not null
+);
+
+alter table attraction_type
+    owner to postgres;
+
+create table continent
+(
+    id   integer not null
+        constraint continent_pk
+            primary key,
+    name varchar not null
+);
+
+alter table continent
+    owner to postgres;
+
+create table country
+(
+    id           char(3)     not null
+        primary key,
+    continent    integer     not null
+        constraint country_continent_null_fk
+            references continent,
+    country_name varchar(50) not null
+        constraint country_cname_key
+            unique
+);
+
+alter table country
+    owner to postgres;
+
+create table city
+(
+    id         integer     not null
+        primary key,
+    country_id char(3)     not null
+        references country,
+    city_name  varchar(50) not null
+        constraint city_cname_key
+            unique
+);
+
+alter table city
+    owner to postgres;
+
+create table attraction
+(
+    id         integer     not null
+        primary key,
+    country_id char(3)     not null
+        references country,
+    attr_name  varchar(50) not null,
+    type       integer     not null
+        constraint attraction_attraction_type_null_fk
+            references attraction_type,
+    image      varchar
+        constraint check_image
+            check (((image)::text ~~ '%.jpg'::text) OR ((image)::text ~~ '%.png'::text)),
+    website    varchar
+);
+
+alter table attraction
+    owner to postgres;
+
+create table title
+(
+    id   serial
+        constraint title_pk
+            primary key,
+    name varchar not null
+);
+
+alter table title
+    owner to postgres;
+
+create table person
+(
+    id                   integer     not null
+        constraint tourist_pkey
+            primary key,
+    name                 varchar(50) not null,
+    favoutite_attraction integer     not null
+        constraint person_attraction_null_fk
+            references attraction,
+    account_id           integer,
+    title_id             integer
+        constraint person_title_null_fk
+            references title
+);
+
+alter table person
+    owner to postgres;
+
+create table citizen
+(
+    id             integer     not null
+        primary key
+        constraint citizen_person_null_fk
+            references person,
+    city_id        integer     not null
+        references city,
+    citizen_name   varchar(50) not null,
+    favourite_city integer
+        constraint citizen_city_id_fk
+            references city
+);
+
+alter table citizen
+    owner to postgres;
+
+create table ticket
+(
+    id            integer default nextval('ticket_sold_id_seq'::regclass) not null
+        constraint ticket_sold_pkey
+            primary key,
+    person_id     integer
+        constraint ticket_sold_tourist_id_fkey
+            references person,
+    attraction_id integer                                                 not null
+        constraint ticket_sold_attraction_null_fk
+            references attraction,
+    price         integer
+        constraint check_name
+            check (price > 0)
+);
+
+alter table ticket
+    owner to postgres;
+
+alter sequence ticket_sold_id_seq owned by ticket.id;
+
+create table account
+(
+    id        integer not null
+        constraint account_pk
+            primary key,
+    username  varchar not null
+        unique,
+    email     varchar not null
+        constraint account_uk_email
+            unique
+        unique
+        constraint check_name
+            check ((email)::text ~~ '%@%.%'::text),
+    person_id integer not null
+        constraint account_person_null_fk
+            references person
+);
+
+alter table account
+    owner to postgres;
+
+alter table person
+    add constraint person_account_null_fk
+        foreign key (account_id) references account;
