@@ -1,18 +1,22 @@
+package controllers;
+
+import views.AddCountry;
+import views.SearchCountry;
+import views.ShowCountryForm;
+
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.*;
-import java.sql.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
+public class ShowCountryController {
 
-public class ShowCountryForm extends JFrame{
-    private JPanel MainPanel;
-    private JTable countryTable;
-    private JButton pressMeButton;
-    private JComboBox<String> chooseContinent;
-    private JButton addNewCountryButton;
-    private JButton searchCountryButton;
-    private String[] columnNames = {"Country", "Continent"};
+    ShowCountryForm showCountryFormView;
+    DatabaseConnection databaseConnection;
 
     Connection connection;
     PreparedStatement preparedStatementForTable; // reads countries of a certain continent
@@ -22,23 +26,47 @@ public class ShowCountryForm extends JFrame{
     ResultSet resultSetForComboBox; // contains continents for combo box
     ResultSet resultSetForFullTable; // contains country-continent pairs for every continent
 
-    public ShowCountryForm(){
-        this.setContentPane(this.MainPanel);
-        setTitle("Countries");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.pack();
-        this.setVisible(true);
+    public ShowCountryController(ShowCountryForm showCountryFormView) {
+        this.showCountryFormView = showCountryFormView;
+        this.databaseConnection = new DatabaseConnection();
 
-        this.setSize(400, 400);
+        manageStatements();
 
-        countryTable.setAutoResizeMode(JTable.WIDTH);
-        addNewCountryButton.setBorder(BorderFactory.createBevelBorder(EtchedBorder.RAISED));
-        searchCountryButton.setBorder(BorderFactory.createBevelBorder(EtchedBorder.RAISED));
-        pressMeButton.setBorder(BorderFactory.createBevelBorder(EtchedBorder.RAISED));
+        showCountryFormView.addChooseContinentListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    String country = (String) showCountryFormView.getChooseContinent().getSelectedItem();
+                    if(country.equals("All")){
+                        country = "%";
+                    }
+                    preparedStatementForTable.setString(1, country);
+                    resultSetForTable = preparedStatementForTable.executeQuery();
+                    manageCountryTable(showCountryFormView.getCountryTable(), resultSetForTable, showCountryFormView.getColumnNames());
+                } catch (Exception ex){
+                    System.out.println(ex);
+                }
+            }
+        });
 
+        showCountryFormView.addNewCountryButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AddCountry addCountry = new AddCountry();
+            }
+        });
+
+        showCountryFormView.addSearchButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SearchCountry searchCountry = new SearchCountry();
+            }
+        });
+    }
+
+    public void manageStatements(){
         try{
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/travel", "postgres", "postgres");
+            connection = databaseConnection.getConnection();
 
             everyContinentStatement = connection.createStatement();
             continentStatement = connection.createStatement();
@@ -50,39 +78,8 @@ public class ShowCountryForm extends JFrame{
             resultSetForComboBox = continentStatement.executeQuery("select name from continent order by name;");
             resultSetForFullTable = everyContinentStatement.executeQuery("select country_name, name from country join continent on country.continent = continent.id;");
 
-            manageComboBox(chooseContinent, resultSetForComboBox);
-            manageCountryTable(countryTable, resultSetForFullTable, columnNames);
-
-            chooseContinent.addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    try{
-                        String country = (String) chooseContinent.getSelectedItem();
-                        if(country.equals("All")){
-                            country = "%";
-                        }
-                        preparedStatementForTable.setString(1, country);
-                        resultSetForTable = preparedStatementForTable.executeQuery();
-                        manageCountryTable(countryTable, resultSetForTable, columnNames);
-                    } catch (Exception ex){
-                        System.out.println(ex);
-                    }
-                }
-            });
-
-            addNewCountryButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    AddCountry addCountry = new AddCountry();
-                }
-            });
-
-            searchCountryButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    SearchCountry searchCountry = new SearchCountry();
-                }
-            });
+            manageComboBox(showCountryFormView.getChooseContinent(), resultSetForComboBox);
+            manageCountryTable(showCountryFormView.getCountryTable(), resultSetForFullTable, showCountryFormView.getColumnNames());
         } catch(Exception e){
             e.printStackTrace();
         }

@@ -23,9 +23,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="c4edfbbc-7e8d-42b3-afe8-795269bb6727" object-ref="schemas/public/tables/country" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
     <filter-actions connection-id="c4edfbbc-7e8d-42b3-afe8-795269bb6727" dataset="public.continent" active-filter-id="310f51f3-95ef-450d-99b8-8d6ec2a47b53">
@@ -34,6 +32,9 @@
     <filter-actions connection-id="c4edfbbc-7e8d-42b3-afe8-795269bb6727" dataset="public.country" active-filter-id="11698888-900a-420a-80fd-c9dc04258c4c">
       <filter id="11698888-900a-420a-80fd-c9dc04258c4c" name="Filter 1" temporary="false" custom-name="false" type="basic" join-type="AND" />
     </filter-actions>
+  </component>
+  <component name="DBNavigator.Project.ExecutionManager">
+    <retain-sticky-names value="false" />
   </component>
   <component name="DBNavigator.Project.FileConnectionMappingManager">
     <mapping file-url="file://$APPLICATION_CONFIG_DIR$/consoles/db/b65d9f49-c579-4ca8-bbb9-1fecb98f6ca5/console.sql" connection-id="virtual-postgres-connection" session-id="MAIN" current-schema="" />
